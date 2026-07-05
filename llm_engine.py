@@ -23,9 +23,9 @@ def analyze_security_payload(payload: str) -> dict:
     Analiza el siguiente payload y clasifícalo en formato JSON.
     Payload: "{payload}"
     
-    Responde ÚNICAMENTE en JSON:
+    Responde ÚNICAMENTE en JSON válido con esta estructura exacta:
     {{
-        "is_attack": true/false,
+        "is_attack": true o false,
         "attack_type": "SQLi, RCE, XSS, Directory Traversal, SSRF, Brute Force, DDoS, o None",
         "risk_level": "LOW, MEDIUM, HIGH, CRITICAL, o NONE",
         "action_taken": "Blocked, Logged, o Allowed"
@@ -35,11 +35,11 @@ def analyze_security_payload(payload: str) -> dict:
     try:
         # --- MODO NUBE (GEMINI) ---
         if LLM_MODE == "cloud":
-            # Usamos la referencia completa del modelo para evitar ambigüedades
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # EL GRAN CAMBIO: Usamos el modelo que descubrimos en el diagnóstico
+            model = genai.GenerativeModel('gemini-2.5-flash')
             response = model.generate_content(prompt)
             
-            # Limpiamos respuesta
+            # Limpiamos la respuesta eliminando bloques markdown si existen
             response_text = response.text.strip().replace("```json", "").replace("```", "")
             return json.loads(response_text)
             
@@ -57,7 +57,7 @@ def analyze_security_payload(payload: str) -> dict:
 
     except Exception as e:
         print(f"Error en LLM Engine: {e}")
-        # Fail-Safe mantiene la seguridad aunque el modelo falle
+        # Fail-Safe: Mantiene la seguridad aunque el modelo falle o la red falle
         return {
             "is_attack": True,
             "attack_type": "Unknown",
