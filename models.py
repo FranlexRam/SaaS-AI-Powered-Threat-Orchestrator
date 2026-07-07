@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
-Base = declarative_base()
+# IMPORTANTE: Importamos 'Base' desde database.py para que todo use el mismo motor de PostgreSQL
+from database import Base 
 
 class Tenant(Base):
     __tablename__ = 'tenants'
@@ -38,4 +39,9 @@ class SecurityEvent(Base):
     source_ip = Column(String)
     action_taken = Column(String) # Ej: "Blocked", "Logged"
     
+    # --- NUEVAS COLUMNAS AÑADIDAS PARA QUE COINCIDA CON MAIN.PY ---
+    payload = Column(String) 
+    is_attack = Column(Boolean, default=False)
+    # --------------------------------------------------------------
+
     tenant = relationship("Tenant")

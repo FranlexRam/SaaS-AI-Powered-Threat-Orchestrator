@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    container_name: sakti_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sakti_admin
+      POSTGRES_PASSWORD: SaktiSecure2026!
+      POSTGRES_DB: sakti_shield_db
+    ports:
+      - "5432:5432"
